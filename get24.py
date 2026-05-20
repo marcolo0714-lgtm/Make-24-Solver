@@ -1,3 +1,7 @@
+from tqdm import tqdm
+import time
+
+# This function generates all arithmetic expressions of the input numbers in a certain permutation, and returns a list of these expressions.
 def recur(inputl):
     n = len(inputl)
     if n == 1:
@@ -42,8 +46,7 @@ expression_set = set()
 
 # 1 progress for each permutation of the input numbers, and there are fact(len(inputnum)) permutations in total
 progress = 0
-for inputl in permutations(inputnum):
-    print(f"Progress: {progress} / {fact(len(inputnum))}")
+for inputl in tqdm(permutations(inputnum), total=fact(len(inputnum)), desc="Processing permutations"):
 
     # recur() generates all possible arithmetic expressions of the input numbers in a certain permutation, 
     # and then we evaluate each expression to check if it gives the expected result
