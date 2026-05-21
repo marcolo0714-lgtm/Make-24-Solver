@@ -55,10 +55,10 @@ Output:
    - the expected target value
 2. For each permutation of the input numbers:
    - use `recur()` to recursively combine the numbers into every possible arithmetic expression using `+`, `-`, `*`, `/`, and parentheses.
-   - evaluate each generated expression
+   - evaluate each generated expression using `eval()`
    - if the evaluated result matches the target within a tiny floating-point tolerance, store the expression in a result set
 3. If the user chose not to generate all expressions, the program stops early once it finds any solution.
-4. Print either a matching expression or a message saying no solution exists.
+4. Print either matching expressions or a message saying no solution exists.
 
 ### How `recur()` works
 
@@ -74,7 +74,7 @@ If `recur([a, b])` is called,
 - Therefore, 4 expressions `['(a + b)', '(a - b)', 'a * b', 'a / b']` are returned and to be evaluated.
 
 If `recur([a, b, c])` is called,
-- (`recur([a])` and `recur([b, c])`) and (`recur([a, b])` and `recur([c])`) will be called.
+- Two splits: `recur([a]) and recur([b, c])`, and `recur([a, b]) and recur([c])`, will be made.
 - Focusing on the 1st split, `['a']` and `['(b + c)', '(b - c)', 'b * c', 'b / c']` are returned respectively.
   - For the pair `'a'` and `'(b + c)'`, 4 expressions `'(a + (b + c))'`, `'(a - (b + c))'`, `'(a * (b + c))'`, `'(a / (b + c))'` are created.
   - The other 3 pairs also create 4 expressions each, so the 1st split creates 16 expressions.
@@ -92,7 +92,6 @@ If `recur([a, b, c])` is called,
 
 ![Closed form for recur(n)](github_images/recur_closed_form.png)
 
-- In combinatorial terms, this equals `4^{n-1}` times the `(n-1)`-th Catalan number.
 
 ### Time complexity of this program
 - The program iterates over every ordered permutation of the input numbers, and there are `n!` such permutations.
@@ -102,7 +101,7 @@ If `recur([a, b, c])` is called,
 ![Overall complexity including permutations](github_images/total_complexity.png)
 
 
-- Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 5` as a 90-second reference point (the case on my computer), the estimated runtime for other values of `n` is proportionally scaled.
+- Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 5` as a `90-second` reference point (the case on my computer), the estimated runtime for other values of `n` is illustrated in the following table:
 
 | n | `n! * recur(n)` | Estimated time |
 |---|---|---|
