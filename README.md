@@ -54,7 +54,7 @@ Output:
    - whether to generate all matching expressions or stop after the first match
    - the expected target value
 2. For each permutation of the input numbers:
-   - use `recur()` to recursively combine the numbers into every possible arithmetic expression using `+`, `-`, `*`, `/`, and parentheses.
+   - use `recur()` to recursively combine the numbers into every possible arithmetic expression using `+`, `-`, `*`, `/`, and parentheses
    - evaluate each generated expression using `eval()`
    - if the evaluated result matches the target within a tiny floating-point tolerance, store the expression in a result set
 3. If the user chose not to generate all expressions, the program stops early once it finds any solution.
@@ -76,7 +76,7 @@ If `recur([a, b])` is called,
 If `recur([a, b, c])` is called,
 - Two splits: `recur([a]) and recur([b, c])`, and `recur([a, b]) and recur([c])`, will be made.
 - Focusing on the 1st split, `['a']` and `['(b + c)', '(b - c)', 'b * c', 'b / c']` are returned respectively.
-  - For the pair `'a'` and `'(b + c)'`, 4 expressions `'(a + (b + c))'`, `'(a - (b + c))'`, `'(a * (b + c))'`, `'(a / (b + c))'` are created.
+  - For the pair `'a'` and `'(b + c)'`, 4 expressions `'(a + (b + c))'`, `'(a - (b + c))'`, `'a * (b + c)'`, `'a / (b + c)'` are created.
   - The other 3 pairs also create 4 expressions each, so the 1st split creates 16 expressions.
 - Similarly, the 2nd split also creates 16 expressions.
 - So, 32 expressions are returned and to be evaluated.
