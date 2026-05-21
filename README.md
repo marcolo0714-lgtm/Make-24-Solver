@@ -108,6 +108,23 @@ n! * recur(n) = n! * \frac{4^{\,n-1}}{n} \binom{2(n-1)}{n-1}
 
 - In big-O terms, the runtime is super-exponential in `n` due to the permutation factor and the recursive expression growth.
 
+- Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 5` as a 90-second reference point, the estimated runtime for other values of `n` is proportionally scaled.
+
+| n | `n! * recur(n)` | Estimated time |
+|---|---|---|
+| 1 | 1 | 0.00021 s |
+| 2 | 8 | 0.00167 s |
+| 3 | 192 | 0.0402 s |
+| 4 | 7,680 | 1.61 s |
+| 5 | 430,080 | 90 s |
+| 6 | 30,965,760 | 1.8 hours |
+| 7 | 2,724,986,880 | 6.6 days |
+| 8 | 283,398,635,520 | 22.5 months |
+| 9 | 34,007,836,262,400 | 226 years |
+| 10 | 4,625,065,731,686,400 | 30,800 years |
+
+> Note: these estimates are directly proportional to the computed expression count and assume the runtime per expression remains constant.
+
 ### Notes
 
 - Division by zero is ignored and does not crash the program.
