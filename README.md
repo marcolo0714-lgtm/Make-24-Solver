@@ -104,7 +104,7 @@ If `recur([a, b, c])` is called,
 - Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 5` as a `90-second` reference point (the case on my computer), the estimated runtime for other values of `n` is illustrated in the following table:
 
 | n | `n! * recur(n)` | Estimated time |
-|---|---|---|
+|---:|---:|---:|
 | 1 | 1 | 0.00021 s |
 | 2 | 8 | 0.00167 s |
 | 3 | 192 | 0.0402 s |
