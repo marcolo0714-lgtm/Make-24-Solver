@@ -4,16 +4,18 @@
 #include <ctype.h>
 #include <math.h>
 
+int sol_count = 0;
+
 /*
  * Parse whitespace-separated integers from a single input line.
  * Supports negative numbers by tracking a sign state.
  *
  * Parameters:
- *   input - null-terminated input string from fgets()
- *   nums  - output array filled with parsed integers
+ *   *input - null-terminated input string from fgets()
+ *   *nums  - output array filled with parsed integers
  *
  * Returns:
- *   number of integers parsed into nums
+ *   number of integers parsed into *nums
  */
 int split(char *input, int *nums) {
     int value = 0;
@@ -23,15 +25,13 @@ int split(char *input, int *nums) {
 
     for (int i = 0; input[i] != '\0' && input[i] != '\n'; ++i) {
         char c = input[i];
+
         if (c == '-') {
-            if (in_number) {
-                nums[num_pos++] = sign * value;
-                value = 0;
-                sign = 1;
-                in_number = 0;
-            }
+            // Regard as new number if '-' appears right after a digit
+            if (in_number) nums[num_pos++] = sign * value;
+            value = 0;
             sign = -1;
-            in_number = 1;
+            in_number = 0;
         } else if (isdigit((unsigned char)c)) {
             value = value * 10 + (c - '0');
             in_number = 1;
@@ -68,11 +68,12 @@ int split(char *input, int *nums) {
  *   or NULL if allocation fails.
  */
 char *make_expr(const char *left, const char *op, const char *right) {
-    size_t len = strlen(left) + strlen(op) + strlen(right) + 4;
+    size_t len = strlen(left) + strlen(op) + strlen(right) + 2; 
     char *buffer = (char *)malloc(len + 1);
     if (buffer == NULL) {
         return NULL;
     }
+    // like printf(), but write to buffer instead of console, with maximum size to be written set
     snprintf(buffer, len + 1, "(%s%s%s)", left, op, right);
     return buffer;
 }
@@ -86,7 +87,7 @@ char *make_expr(const char *left, const char *op, const char *right) {
  *
  * Parameters:
  *   nums      - array of current numeric values
- *   expr      - array of current expression strings for each value
+ *   expr      - array of current expression strings for each value in nums
  *   input_num - current number of values in the arrays
  *   target    - target value to reach
  *
@@ -94,10 +95,10 @@ char *make_expr(const char *left, const char *op, const char *right) {
  *   1 if a solution is found and printed, otherwise 0.
  */
 int recur(double *nums, char **expr, int input_num, double target) {
+    /* Base case: only one number left, check if it matches target. */
     if (input_num == 1) {
-        /* Base case: only one number left, check if it matches target. */
         if (fabs(nums[0] - target) < 1e-6) {
-            printf("Solution: %s\n", expr[0]);
+            printf("%d:  %s = %lf\n", sol_count++, expr[0], target);
             return 1;
         }
         return 0;
@@ -157,6 +158,7 @@ int recur(double *nums, char **expr, int input_num, double target) {
                     continue;
                 }
 
+                /* Reconstruct *nums and **expr by inserting combined number at the end*/
                 double next_nums[10];
                 char *next_expr[10];
                 int next_index = 0;
@@ -176,7 +178,7 @@ int recur(double *nums, char **expr, int input_num, double target) {
                 /* Recurse with one fewer active value. */
                 if (recur(next_nums, next_expr, input_num - 1, target)) {
                     free(candidates[c].expression);
-                    // return 1;
+                    // return 1;   // stop early if any solution is found
                 }
 
                 free(candidates[c].expression);
@@ -203,7 +205,7 @@ int main(void) {
 
     int int_nums[100];
     int input_num = split(input, int_nums);
-    if (input_num <= 0) {
+    if (input_num == 0) {
         printf("No numbers were entered.\n");
         return 1;
     }
@@ -223,25 +225,21 @@ int main(void) {
     /* Initialize each expression entry to the original numeric literal. */
     for (int i = 0; i < input_num; ++i) {
         nums[i] = (double)int_nums[i];
-        expr[i] = (char *)malloc(32);
+        expr[i] = (char *)malloc(12);  // enough to hold "-2147483648" and null terminator
         if (expr[i] == NULL) {
-            for (int j = 0; j < i; ++j) {
-                free(expr[j]);
-            }
+            for (int j = 0; j < i; ++j) free(expr[j]);
             free(expr);
             free(nums);
             return 1;
         }
-        snprintf(expr[i], 32, "%d", int_nums[i]);
+        snprintf(expr[i], 12, "%d", int_nums[i]);
     }
 
     printf("Enter target number: ");
     double target;
     if (scanf("%lf", &target) != 1) {
         printf("Invalid target number.\n");
-        for (int i = 0; i < input_num; ++i) {
-            free(expr[i]);
-        }
+        for (int i = 0; i < input_num; ++i) free(expr[i]);
         free(expr);
         free(nums);
         return 1;
@@ -251,9 +249,8 @@ int main(void) {
         printf("No solution found.\n");
     }
 
-    for (int i = 0; i < input_num; ++i) {
-        free(expr[i]);
-    }
+    for (int i = 0; i < input_num; ++i) free(expr[i]);
+    free(expr);
     free(nums);
 
     return 0;
