@@ -1,124 +1,122 @@
-# Make24 Solver
+﻿# Make24 Solver
 
-`get24.py` is a small command-line program that takes a list of numbers and an expected target result, then tries to build arithmetic expressions from those numbers that evaluate to the target.
+This repository compares two implementations of the classic 24 Game solver:
+
+- `24solver.py`: a Python brute-force approach that permutes numbers and builds expressions exhaustively.
+- `24solver.c`: a C implementation that uses a recursive pick-two strategy to reduce the set of values one step at a time.
+
+The goal is to explore how different algorithmic strategies affect performance and structure for the same problem.
+
+## Project Structure
+
+- `24solver.py` - Python brute-force solver.
+- `24solver.c` - C recursive solver using pairwise reduction.
+- `README.md` - this comparative overview.
 
 ## Requirements
 
-- Python 3
-- `tqdm` package
+### Python version
+- Python 3.x
+- `tqdm` package (used by `24solver.py` for progress display)
 
-Install `tqdm` with:
+Install dependencies with:
 
 ```bash
 pip install tqdm
 ```
 
+### C compiler
+- A C compiler such as `gcc` is required to build `24solver.c`.
+
 ## How to run
 
-From the folder containing `get24.py`:
+### Python brute-force solver
+
+From the repository root:
 
 ```bash
-python get24.py
+python 24solver.py
 ```
 
-Then follow the prompts:
+### C pick-two solver
+
+Compile the C program and run it:
+
+```bash
+gcc -std=c11 -O2 24solver.c -o 24solver
+./24solver
+```
+
+### To use the program
+Follow the prompts to enter the numbers and target:
 
 1. Enter the input numbers separated by spaces.
-2. Choose whether to generate all possible expressions (`y`) or stop after finding the first solution (`n`).
-3. Enter the expected result.
+2. Enter the target number.
+3. Choose whether to generate all possible solutions (`y`) or stop after the first match (`n`).
 
-## Example Usage
-
-Input:
+## Example usage (for both `24solver.py` and `24solver.c`)
 
 ```text
 Enter numbers (space-separated): 3 3 8 8
+Enter target number: 24
 Generate all possible arithmetic expressions of the input numbers? (y/n): y
-Enter expected result: 24
 ```
 
-Output:
+## Comparison of strategies
 
-```text
-✅ All possible solutions found!
-1. 8 / (3 - 8 / 3)
-```
+### Python brute-force (`24solver.py`)
 
-## Program Logic
+- Explores every ordered permutation of the input numbers.
+- Recursively constructs every possible arithmetic expression from each permutation.
+- Best suited for clarity and exhaustive solution listing.
 
-`get24.py` works by exploring every ordered permutation of the given input numbers and then recursively building all valid arithmetic expressions from each permutation.
+### C recursive pick-two strategy (`24solver.c`)
 
-### Main steps
-1. Read user input:
-   - a list of numbers
-   - whether to generate all matching expressions or stop after the first match
-   - the expected target value
-2. For each permutation of the input numbers:
-   - use `recur()` to recursively combine the numbers into every possible arithmetic expression using `+`, `-`, `*`, `/`, and parentheses
-   - evaluate each generated expression using `eval()`
-   - if the evaluated result matches the target within a tiny floating-point tolerance, store the expression in a result set
-3. If the user chose not to generate all expressions, the program stops early once it finds any solution.
-4. Print either matching expressions or a message saying no solution exists.
+- Selects two numbers at a time and replaces them with the result of a chosen operation.
+- Reduces the search space recursively, avoiding explicit full permutation enumeration in every recursive branch.
+- Best suited for performance and demonstrating a different way to solve the same problem.
 
-### How `recur()` works
 
-- If the input list has one item, it returns that single expression.
-- Otherwise, it splits the list into two non-empty parts at every possible position.
-- Each part first returns all of its possible expression. Then, for each pair of expression (taking one from each part), the pair is combined (using the 4 arithmetic operations) to form 4 new expressions.
-- The function returns all expressions built from that permutation, with necessary parentheses inserted to preserve operation order.
+## Time complexity analysis of `24solver.py`
+Let `n` be the number of numbers in the input list. Let `recur(n)` be the number of different arithmetic expressions returned for a SINGLE permutation of numbers (which is NOT the overall complexity of the program).
+- Base case of `recur()`: `recur(1)` returns 1 expression, and `recur(2)` returns 4 expressions.
+- Recursive case of `recur()`: for `n > 2`, `recur(n)` constructs all arithmetic expressions by splitting the list into two non-empty parts, and combining one expression from the left part with one from the right part using the 4 operators. Therefore, the recurrence form is given by:
 
-### Examples of `recur()` calls
-
-If `recur([a, b])` is called,
-- The only possible spilt is `recur([a])` and `recur([b])`, returning `['a']` and `['b']` respectively.
-- Therefore, 4 expressions `['(a + b)', '(a - b)', 'a * b', 'a / b']` are returned and to be evaluated.
-
-If `recur([a, b, c])` is called,
-- Two splits: `recur([a]) and recur([b, c])`, and `recur([a, b]) and recur([c])`, will be made.
-- Focusing on the 1st split, `['a']` and `['(b + c)', '(b - c)', 'b * c', 'b / c']` are returned respectively.
-  - For the pair `'a'` and `'(b + c)'`, 4 expressions `'(a + (b + c))'`, `'(a - (b + c))'`, `'a * (b + c)'`, `'a / (b + c)'` are created.
-  - The other 3 pairs also create 4 expressions each, so the 1st split creates 16 expressions.
-- Similarly, the 2nd split also creates 16 expressions.
-- So, 32 expressions are returned and to be evaluated.
-
-### Time complexity analysis of `recur()`
-- Let `n` be the number of numbers in the input list passed to `recur()`.
-- Base case: `recur(1)` returns 1 expression, and `recur(2)` returns 4 expressions.
-- Recursive case: for `n > 2`, `recur(n)` constructs expressions by splitting the list into two non-empty parts and combining every expression from the left part with every expression from the right part using the 4 operators. Therefore, the recurrence form is given by:
-
-![Recurrence form for recur(n)](github_images/recur_recurrence_form.png)
+![py: Recurrence form for recur(n)](github_images/recur_recurrence_form.png)
 
 - This recurrence has a closed form, valid for at least `n = 1` through `n = 10`:
 
-![Closed form for recur(n)](github_images/recur_closed_form.png)
+![py: Closed form for recur(n)](github_images/recur_closed_form.png)
 
+The program then iterates over every ordered permutation of the input numbers, and there are `n!` such permutations.
+- For each permutation, it calls `recur()` once and evaluates every generated expression.
+Therefore, the overall number of evaluated expressions is:
 
-### Time complexity of this program
-- The program iterates over every ordered permutation of the input numbers, and there are `n!` such permutations.
-- For each permutation, it calls `recur()` and evaluates every generated expression.
-- Therefore, the overall number of generated expressions is roughly:
+![py: Overall complexity of program](github_images/total_complexity.png)
 
-![Overall complexity including permutations](github_images/total_complexity.png)
+## Time complexity analysis of `24solver.c`
+Let `n` be the number of numbers in the input list. Let `recur(n)` be the number of different arithmetic expressions returned for ALL permutations of numbers (which IS the overall complexity of the program).
+- Base case of `recur()`: `recur(1)` evaluates 1 expression, and `recur(2)` evaluates 6 expressions.
+- Recursive case of `recur()`: for `n > 2`, `recur(n)` first picks 2 numbers (say `a` and `b`), and combine them into 1 using `a+b`, `a-b`, `b-a`, `a*b`, `a/b`, `b/a`. Then `recur(n-1)` is called with this new number and the untouched numbers. Therefore, the recurrence form is given by:
 
+![c: Recurrence form for recur(n)](github_images/c_recur_recurrence_form.png)
 
-- Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 5` as a `90-second` reference point (the case on my computer), the estimated runtime for other values of `n` is illustrated in the following table:
+This recurrence, which is also the overall number of evaluated expressions, has a closed-form:
+![c: Overall complexity of program](github_images/c_total_complexity.png)
 
-| n | `n! * recur(n)` | Estimated time |
-|---:|---:|---:|
-| 1 | 1 | 0.00021 s |
-| 2 | 8 | 0.00167 s |
-| 3 | 192 | 0.0402 s |
-| 4 | 7,680 | 1.61 s |
-| 5 | 430,080 | 90 s |
-| 6 | 30,965,760 | 1.8 hours |
-| 7 | 2,724,986,880 | 6.6 days |
-| 8 | 283,398,635,520 | 22.5 months |
-| 9 | 34,007,836,262,400 | 226 years |
-| 10 | 4,625,065,731,686,400 | 30,800 years |
+## Performance comparison between `24solver.py` and `24solver.c`
+Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 6` as the reference point for the estimated runtime for `n > 6`, the execution time of `24solver.py` and `24solver.c` are illustrated in the following table:
 
-> Note: these estimates are directly proportional to the computed expression count and assume the runtime per expression remains constant.
-
-### Other Notes
-
-- Division by zero is ignored and does not crash the program.
-- The program uses a tolerance of `1e-10` when comparing floating-point results to the expected target.
+| n | Evaluated expressions|      | Execution time  | |
+| | `24solver.py`|`24solver.c`    |`24solver.py` |`24solver.c`|
+|---:|---:|---:|---:|---:|
+| 1 | 1            | 1            | 0.018 s      | 0.000 s
+| 2 | 8            | 6            | 0.022 s      | 0.000 s
+| 3 | 192          | 108          | 0.075 s      | 0.001 s
+| 4 | 7,680        | 3,888        | 1.76 s       | 0.004 s
+| 5 | 430,080      | 233,280      | 90.0 s       | 0.057 s
+| 6 | 3.10 * 10^7  | 2.10 * 10^7  | 2.1 hours    | 3.830 s
+| 7 | 2.72 * 10^9  | 2.65 * 10^9  | 7.7 days     | 8.10 mins
+| 8 | 2.83 * 10^11 | 4.44 * 10^11 | 26.6 months  | 22.5 hours
+| 9 | 3.40 * 10^13 | 9.60 * 10^13 | 266 years    | 203 days
+| 10| 4.63 * 10^15 | 2.59 * 10^16 | 36,300 years | 149 years

@@ -3,7 +3,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <time.h>
 
+int generate_all_sol = 0;
 int sol_count = 0;
 
 /*
@@ -97,8 +99,8 @@ char *make_expr(const char *left, const char *op, const char *right) {
 int recur(double *nums, char **expr, int input_num, double target) {
     /* Base case: only one number left, check if it matches target. */
     if (input_num == 1) {
-        if (fabs(nums[0] - target) < 1e-6) {
-            printf("%d:  %s = %lf\n", sol_count++, expr[0], target);
+        if (fabs(nums[0] - target) < 1e-10) {
+            printf("%d: %s = %.2lf\n", ++sol_count, expr[0], target);
             return 1;
         }
         return 0;
@@ -178,7 +180,7 @@ int recur(double *nums, char **expr, int input_num, double target) {
                 /* Recurse with one fewer active value. */
                 if (recur(next_nums, next_expr, input_num - 1, target)) {
                     free(candidates[c].expression);
-                    // return 1;   // stop early if any solution is found
+                    if (!generate_all_sol) return 1;   // stop early if any solution is found, and is requested
                 }
 
                 free(candidates[c].expression);
@@ -196,6 +198,12 @@ int recur(double *nums, char **expr, int input_num, double target) {
  * an arithmetic expression using the input numbers to evaluate to the target.
  */
 int main(void) {
+    printf("------------------------------------------------------------------------------\n");
+    printf("| [C] This program is to be input some numbers and an expected result,       |\n");
+    printf("| and try to give any arithmetic expression of the input numbers that equals |\n");
+    printf("| to the expected result, or claim that there is no such expression.         |\n");
+    printf("------------------------------------------------------------------------------\n");
+    
     printf("Enter numbers (space-separated): ");
     char input[100];
     if (fgets(input, sizeof(input), stdin) == NULL) {
@@ -245,9 +253,32 @@ int main(void) {
         return 1;
     }
 
-    if (!recur(nums, expr, input_num, target)) {
-        printf("No solution found.\n");
+    printf("Generate all possible arithmetic expressions of the input numbers? (y/n): ");
+    char choice;
+    if (scanf(" %c", &choice) != 1){
+        printf("Invalid target number.\n");
+        for (int i = 0; i < input_num; ++i) free(expr[i]);
+        free(expr);
+        free(nums);
+        return 1;
     }
+    if (choice == 'y' || choice == 'Y')
+        generate_all_sol = 1;
+    else
+        generate_all_sol = 0;
+
+    // Program now starts searching for arithmetic expression
+    clock_t start_time = clock();
+
+    recur(nums, expr, input_num, target);
+
+    if (sol_count == 0)
+        printf("There are no arithmetic expression of the input numbers that gives the expected result.\n");
+
+    clock_t end_time = clock();
+    double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+
+    printf("Execution Time (excluding input time): %f seconds\n", time_spent);
 
     for (int i = 0; i < input_num; ++i) free(expr[i]);
     free(expr);
