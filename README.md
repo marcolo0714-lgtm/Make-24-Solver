@@ -47,7 +47,7 @@ gcc -std=c11 -O2 24solver.c -o 24solver
 ./24solver
 ```
 
-### To use the program
+### To use the programs (for both `24solver.py` and `24solver.c`)
 Follow the prompts to enter the numbers and target:
 
 1. Enter the input numbers separated by spaces.
@@ -68,13 +68,11 @@ Generate all possible arithmetic expressions of the input numbers? (y/n): y
 
 - Explores every ordered permutation of the input numbers.
 - Recursively constructs every possible arithmetic expression from each permutation.
-- Best suited for clarity and exhaustive solution listing.
 
 ### C recursive pick-two strategy (`24solver.c`)
 
 - Selects two numbers at a time and replaces them with the result of a chosen operation.
 - Reduces the search space recursively, avoiding explicit full permutation enumeration in every recursive branch.
-- Best suited for performance and demonstrating a different way to solve the same problem.
 
 
 ## Time complexity analysis of `24solver.py`
@@ -88,9 +86,7 @@ Let `n` be the number of numbers in the input list. Let `recur(n)` be the number
 
 ![py: Closed form for recur(n)](github_images/py_recur_closed_form.png)
 
-The program then iterates over every ordered permutation of the input numbers, and there are `n!` such permutations.
-- For each permutation, it calls `recur()` once and evaluates every generated expression.
-Therefore, the overall number of evaluated expressions is:
+The program then iterates over every ordered permutation of the input numbers, and there are `n!` such permutations. For each permutation, it calls `recur()` once and evaluates every generated expression. Therefore, the overall number of evaluated expressions is:
 
 ![py: Overall complexity of program](github_images/py_total_complexity.png)
 
@@ -105,11 +101,11 @@ This recurrence, which is also the overall number of evaluated expressions, has 
 ![c: Overall complexity of program](github_images/c_total_complexity.png)
 
 ## Performance comparison between `24solver.py` and `24solver.c`
-Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 6` as the reference point for the estimated runtime for `n > 6`, the execution time of `24solver.py` and `24solver.c` are illustrated in the following table:
+The following performance are measured by using `n` small numbers (< 10) and select `generate all arithmetic expressions`. Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 6` as the reference point for the estimated runtime for `n > 6`, the execution time of `24solver.py` and `24solver.c` are illustrated in the following table:
 
 | n  ||    Evaluated expressions  |              | Execution time|
-| | `24solver.py`|`24solver.c`    |`24solver.py` |`24solver.c`|
 |---:|---:|---:|---:|---:|
+| | `24solver.py`|`24solver.c`    |`24solver.py` |`24solver.c`|
 | 1 | 1            | 1            | 0.018 s      | 0.000 s
 | 2 | 8            | 6            | 0.022 s      | 0.000 s
 | 3 | 192          | 108          | 0.075 s      | 0.001 s
@@ -120,3 +116,38 @@ Assuming runtime scales directly with the total number of evaluated expressions,
 | 8 | 2.83 * 10^11 | 4.44 * 10^11 | 26.6 months  | 22.5 hours
 | 9 | 3.40 * 10^13 | 9.60 * 10^13 | 266 years    | 203 days
 | 10| 4.63 * 10^15 | 2.59 * 10^16 | 36,300 years | 149 years
+
+## Observations
+
+### 1. The Mathematical Tipping Point (n = 8)
+
+Observation: From `n = 1` to `n = 7`, the pick-2 strategy (C program) evaluates fewer expressions than the brute-force solver (Python). At `n = 8`, the trend flips and the pick-2 strategy evaluates more expressions (`2.83 × 10^11` vs `4.44 × 10^11`), and the gap continues to widens at `n = 9` and `n = 10`.
+
+Explanation: This reflects the underlying growth rates of the two recurrence models. The pick-two formula has a larger asymptotic growth than the Catalan-based brute-force recurrence. For small `n`, the reduction factor in the pick-two method still keeps its expression count lower. Beyond `n = 8`, however, the factorial-like growth of the pick-two strategy overtakes the brute-force strategy and creates a mathematical crossover point.
+
+### 2. The Staggering Language Speed Discrepancy
+
+Observation: At `n = 6`, both algorithms evaluate a comparable number of expressions (`3.10 × 10^7` vs `2.10 × 10^7`). Despite this, the Python program takes `2.1 hours` while the C program finishes in `3.83 seconds`.
+
+Explanation: This highlights the large runtime overhead of interpreted Python when it must translate its code line-by-line during execution. Moreover, this Python program uses `eval()` to evaluate arithmetic expression, where the interpreter must parse the string, compile it into an Abstract Syntax Tree (AST), execute it, and garbage-collect the memory, further worsening the performance of the Python program. Even with similar expression counts, the language execution models still introduce a huge speed gap (`4,100 expr/s` vs `5,480,000 expr/s`).
+
+### 3. Execution Time Inversion (n ≥ 8)
+
+Observation: At `n = 8, 9, 10`, the C program evaluates more expressions than Python, yet it still finishes much faster (e.g. `22.5 hours` vs `26.6 months` at `n = 8`).
+
+Explanation: C’s raw execution speed compensates for the worse asymptotic expression count. The pick-two algorithm is algorithmically less efficient for large `n`, but compiled C can still process far more paths in a shorter wall-clock time than interpreted Python. Because C executes instructions 1300 times faster than the Python program (as deduced in the above for `n = 6`), the Pick-2 algorithm (C program) would have to evaluate 1300 times more expressions than the brute-force method (Python) before this C program would actually take longer to run.
+
+### 4. The Python Startup Penalty (n = 1 and n = 2)
+
+Observation: At `n = 1`, Python takes `0.018s` to evaluate a single expression. At `n = 2`, Python’s expression count jumps 8× but execution time barely changes (`0.018s` to `0.022s`). On the other hand, C takes close to no time to evaluate a few expressions at `n = 1, 2`.
+
+Explanation: The initial cost is dominated by Python interpreter startup, module loading, and runtime overhead, not the arithmetic itself. For tiny inputs, Python’s fixed overhead is the main cost, while C’s compiled binary executes with almost no startup penalty.
+
+### 5. The Combinatorial Wall (n ≥ 10)
+Observation: Extrapolating to `n = 10`, the C program still takes `149 years`, even though it is much faster than the Python estimate of `36,300 years`.
+
+Explanation: This shows the limits of language speed against factorial complexity. No matter how optimized the implementation, an `O(n!)` algorithm eventually hits a physical hardware wall. To solve `n ≥ 10` in a reasonable time, a fundamentally different algorithm is required, rather than just faster execution speed.
+
+## Future Direction
+- Add memoization or state deduplication to both solvers to avoid redundant subproblem exploration.
+- Measure actual runtime and memory usage for both implementations instead of relying only on theoretical estimates.
