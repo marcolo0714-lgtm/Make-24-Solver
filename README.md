@@ -82,17 +82,17 @@ Let `n` be the number of numbers in the input list. Let `recur(n)` be the number
 - Base case of `recur()`: `recur(1)` returns 1 expression, and `recur(2)` returns 4 expressions.
 - Recursive case of `recur()`: for `n > 2`, `recur(n)` constructs all arithmetic expressions by splitting the list into two non-empty parts, and combining one expression from the left part with one from the right part using the 4 operators. Therefore, the recurrence form is given by:
 
-![py: Recurrence form for recur(n)](github_images/recur_recurrence_form.png)
+![py: Recurrence form for recur(n)](github_images/py_recur_recurrence_form.png)
 
 - This recurrence has a closed form, valid for at least `n = 1` through `n = 10`:
 
-![py: Closed form for recur(n)](github_images/recur_closed_form.png)
+![py: Closed form for recur(n)](github_images/py_recur_closed_form.png)
 
 The program then iterates over every ordered permutation of the input numbers, and there are `n!` such permutations.
 - For each permutation, it calls `recur()` once and evaluates every generated expression.
 Therefore, the overall number of evaluated expressions is:
 
-![py: Overall complexity of program](github_images/total_complexity.png)
+![py: Overall complexity of program](github_images/py_total_complexity.png)
 
 ## Time complexity analysis of `24solver.c`
 Let `n` be the number of numbers in the input list. Let `recur(n)` be the number of different arithmetic expressions returned for ALL permutations of numbers (which IS the overall complexity of the program).
@@ -107,7 +107,7 @@ This recurrence, which is also the overall number of evaluated expressions, has 
 ## Performance comparison between `24solver.py` and `24solver.c`
 Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 6` as the reference point for the estimated runtime for `n > 6`, the execution time of `24solver.py` and `24solver.c` are illustrated in the following table:
 
-| n | Evaluated expressions|      | Execution time  | |
+| n  ||    Evaluated expressions  |              | Execution time|
 | | `24solver.py`|`24solver.c`    |`24solver.py` |`24solver.c`|
 |---:|---:|---:|---:|---:|
 | 1 | 1            | 1            | 0.018 s      | 0.000 s
