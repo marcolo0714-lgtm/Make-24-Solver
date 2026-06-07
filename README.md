@@ -7,11 +7,6 @@ This repository compares two implementations of the classic 24 Game solver:
 
 The goal is to explore how different algorithmic strategies affect performance and structure for the same problem.
 
-## Project Structure
-
-- `24solver.py` - Python brute-force solver.
-- `24solver.c` - C recursive solver using pairwise reduction.
-- `README.md` - this comparative overview.
 
 ## Requirements
 
@@ -78,7 +73,7 @@ Generate all possible arithmetic expressions of the input numbers? (y/n): y
 ## Time complexity analysis of `24solver.py`
 Let `n` be the number of numbers in the input list. Let `recur(n)` be the number of different arithmetic expressions returned for a SINGLE permutation of numbers (which is NOT the overall complexity of the program).
 - Base case of `recur()`: `recur(1)` returns 1 expression, and `recur(2)` returns 4 expressions.
-- Recursive case of `recur()`: for `n > 2`, `recur(n)` constructs all arithmetic expressions by splitting the list into two non-empty parts, and combining one expression from the left part with one from the right part using the 4 operators. Therefore, the recurrence form is given by:
+- Recursive case of `recur()`: for `n > 2`, `recur(n)` constructs all arithmetic expressions (of a single permutation of numbers) by splitting the list into two non-empty parts, and combining one expression from the left part with one from the right part using the 4 operators. Therefore, the recurrence form is given by:
 
 ![py: Recurrence form for recur(n)](github_images/py_recur_recurrence_form.png)
 
@@ -125,6 +120,8 @@ Observation: From `n = 1` to `n = 7`, the pick-2 strategy (C program) evaluates 
 
 Explanation: This reflects the underlying growth rates of the two recurrence models. The pick-two formula has a larger asymptotic growth than the Catalan-based brute-force recurrence. For small `n`, the reduction factor in the pick-two method still keeps its expression count lower. Beyond `n = 8`, however, the factorial-like growth of the pick-two strategy overtakes the brute-force strategy and creates a mathematical crossover point.
 
+One explanation for this unexpected observation could be that the pick-2 strategy will generate identical expressions in different iterations (while the brute-force solver will never). For example, in an iteration, the pick-2 algorithm may first pick `(A-B)`, then `C*D`, then combine these expression to create `(A-B) / C*D`. In another iteration, it may first pick `C*D`, then `(A-B)`, then combine these expression to create `(A-B) / C*D` again (because when combining two numbers `a` and `b`, 6 expressions, including `a/b`, `b/a`, are generated.)
+
 ### 2. The Staggering Language Speed Discrepancy
 
 Observation: At `n = 6`, both algorithms evaluate a comparable number of expressions (`3.10 × 10^7` vs `2.10 × 10^7`). Despite this, the Python program takes `2.1 hours` while the C program finishes in `3.83 seconds`.
@@ -146,8 +143,9 @@ Explanation: The initial cost is dominated by Python interpreter startup, module
 ### 5. The Combinatorial Wall (n ≥ 10)
 Observation: Extrapolating to `n = 10`, the C program still takes `149 years`, even though it is much faster than the Python estimate of `36,300 years`.
 
-Explanation: This shows the limits of language speed against factorial complexity. No matter how optimized the implementation, an `O(n!)` algorithm eventually hits a physical hardware wall. To solve `n ≥ 10` in a reasonable time, a fundamentally different algorithm is required, rather than just faster execution speed.
+Explanation: This shows the limits of language speed against factorial complexity. No matter how optimized the implementation, an algorithm with exponential and factorial complexity will eventually hits a physical hardware wall. To solve `n ≥ 10` in a reasonable time, a fundamentally different algorithm is required, rather than just faster execution speed.
 
 ## Future Direction
 - Add memoization or state deduplication to both solvers to avoid redundant subproblem exploration.
+- Create a C brute-force program, and auto-determine which algorithm (brute-force vs pick-two) to use depending on the requested size of problem of the extended 24 game.
 - Measure actual runtime and memory usage for both implementations instead of relying only on theoretical estimates.
