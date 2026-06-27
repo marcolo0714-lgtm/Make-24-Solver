@@ -179,8 +179,10 @@ int recur(double *nums, char **expr, int input_num, double target) {
 
                 /* Recurse with one fewer active value. */
                 if (recur(next_nums, next_expr, input_num - 1, target)) {
-                    free(candidates[c].expression);
-                    if (!generate_all_sol) return 1;   // stop early if any solution is found, and is requested
+                    if (!generate_all_sol) {
+                        free(candidates[c].expression);
+                        return 1;   // stop early if any solution is found, and is requested
+                    }
                 }
 
                 free(candidates[c].expression);
