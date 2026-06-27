@@ -57,6 +57,63 @@ Enter target number: 24
 Generate all possible arithmetic expressions of the input numbers? (y/n): y
 ```
 
+## Testing
+
+A correctness test suite lives in `testcase/`. It runs both solvers as subprocesses
+against 40 known test cases spanning problem sizes `n = 1` through `n = 5`, then writes
+a detailed report to `testcase/report.txt`.
+
+### What the test script does
+
+- Runs each solver in **first-solution** mode and verifies the returned expression
+  evaluates to the expected target.
+- Runs each solver in **all-solutions** mode (for `n ≤ 4`) and verifies **every**
+  expression it returns evaluates correctly.
+- Checks that both solvers agree on whether a solution exists.
+- Detects crashes, timeouts, and encoding issues.
+- Records execution time from each solver per test case.
+- The test cases are defined externally in `testcase/test_cases.txt` — not hardcoded.
+
+### How to run the test script
+
+From the repository root:
+
+```bash
+python testcase/test_solver.py
+```
+
+The C solver is auto-compiled if the binary is missing or out of date.
+
+Console output is compact — a `+` per passing test, with failures listed at the end.
+Full details (per-case times, solution counts, error messages) are written to
+`testcase/report.txt`.
+
+> The suite uses 40 test cases and typically completes in **around 2 minutes**.
+> Most of that time is spent on the `n = 5` unsolvable case, where the Python solver
+> exhaustively searches all permutations (~90 s).
+
+### Modifying test cases
+
+Open `testcase/test_cases.txt`. Each line is pipe-delimited:
+
+```
+# numbers | target | solvable(y/n) | all_sol(y/n) | description
+6 4 | 24 | y | y | n=2: multiply 6*4
+```
+
+- **numbers** — space-separated integers.
+- **target** — the target value.
+- **solvable** — `y` if a solution exists, `n` if none exists (the test asserts this).
+- **all_sol** — `y` to also verify all-solutions mode; `n` to run first-solution only.
+- **description** — free-form label shown in the report.
+
+Lines starting with `#` are comments and blank lines are ignored.
+
+> **Caution:** Setting `all_sol = y` with problem size `n ≥ 5` is not recommended —
+> the Python solver takes ~90 s for `n = 5`. Adding a test case with `n ≥ 6` and
+> `all_sol = y` can cause the test script to run for **over 2 hours** (see the
+> performance table below).
+
 ## Comparison of strategies
 
 ### Python brute-force (`24solver.py`)
@@ -96,21 +153,25 @@ This recurrence, which is also the overall number of evaluated expressions, has 
 ![c: Overall complexity of program](github_images/c_total_complexity.png)
 
 ## Performance comparison between `24solver.py` and `24solver.c`
-The following performance are measured by using `n` small numbers (< 10) and select `generate all arithmetic expressions`. Assuming runtime scales directly with the total number of evaluated expressions, and taking `n = 6` as the reference point for the estimated runtime for `n > 6`, the execution time of `24solver.py` and `24solver.c` are illustrated in the following table:
+The following performance data comes from the test suite (`testcase/test_solver.py`).
+For `n = 1` through `n = 4` the average of all-solutions mode was used.
+Assuming runtime scales directly with the total number of evaluated expressions, and
+taking `n = 6` as the reference point for the estimated runtime for `n > 6`, the
+execution time of `24solver.py` and `24solver.c` are illustrated in the following table:
 
 | n  ||    Evaluated expressions  |              | Execution time|
 |---:|---:|---:|---:|---:|
 | | `24solver.py`|`24solver.c`    |`24solver.py` |`24solver.c`|
-| 1 | 1            | 1            | 0.018 s      | 0.000 s
-| 2 | 8            | 6            | 0.022 s      | 0.000 s
-| 3 | 192          | 108          | 0.075 s      | 0.001 s
-| 4 | 7,680        | 3,888        | 1.76 s       | 0.004 s
+| 1 | 1            | 1            | 0.015 s      | 0.000 s
+| 2 | 8            | 6            | 0.017 s      | 0.000 s
+| 3 | 192          | 108          | 0.059 s      | 0.000 s
+| 4 | 7,680        | 3,888        | 1.68 s       | 0.001 s
 | 5 | 430,080      | 233,280      | 90.0 s       | 0.057 s
-| 6 | 3.10 * 10^7  | 2.10 * 10^7  | 2.1 hours    | 3.830 s
-| 7 | 2.72 * 10^9  | 2.65 * 10^9  | 7.7 days     | 8.10 mins
-| 8 | 2.83 * 10^11 | 4.44 * 10^11 | 26.6 months  | 22.5 hours
-| 9 | 3.40 * 10^13 | 9.60 * 10^13 | 266 years    | 203 days
-| 10| 4.63 * 10^15 | 2.59 * 10^16 | 36,300 years | 149 years
+| 6 | 3.10 × 10^7  | 2.10 × 10^7  | 2.1 hours    | 3.830 s
+| 7 | 2.72 × 10^9  | 2.65 × 10^9  | 7.7 days     | 8.10 mins
+| 8 | 2.83 × 10^11 | 4.44 × 10^11 | 26.6 months  | 22.5 hours
+| 9 | 3.40 × 10^13 | 9.60 × 10^13 | 266 years    | 203 days
+| 10| 4.63 × 10^15 | 2.59 × 10^16 | 36,300 years | 149 years
 
 ## Observations
 

@@ -1,0 +1,208 @@
+======================================================================
+  24 Solver Test Suite  —  Report
+  2026-06-27 22:47:00
+======================================================================
+
+[ 1] PASS  n=1: single number equals target
+     nums=[24]  target=24
+     Py first:  0.0124s | C first:  0.0000s
+     Py all:    0.0198s (1) | C all:    0.0000s (1)
+
+[ 2] PASS  n=1: zero target, single zero
+     nums=[0]  target=0
+     Py first:  0.0177s | C first:  0.0000s
+     Py all:    0.0137s (1) | C all:    0.0000s (1)
+
+[ 3] PASS  n=1: negative match
+     nums=[-5]  target=-5
+     Py first:  0.0139s | C first:  0.0000s
+     Py all:    0.0136s (1) | C all:    0.0000s (1)
+
+[ 4] PASS  n=1: mismatch
+     nums=[5]  target=24
+     Py first:  0.0133s | C first:  0.0000s
+     Py all:    0.0138s (0) | C all:    0.0000s (0)
+
+[ 5] PASS  n=1: non-24 mismatch
+     nums=[3]  target=10
+     Py first:  0.0179s | C first:  0.0000s
+     Py all:    0.0125s (0) | C all:    0.0000s (0)
+
+[ 6] PASS  n=2: multiply 6*4
+     nums=[6 4]  target=24
+     Py first:  0.0154s | C first:  0.0000s
+     Py all:    0.0201s (2) | C all:    0.0000s (1)
+
+[ 7] PASS  n=2: add 10+14
+     nums=[10 14]  target=24
+     Py first:  0.0149s | C first:  0.0000s
+     Py all:    0.0152s (2) | C all:    0.0000s (1)
+
+[ 8] PASS  n=2: subtract 30-6
+     nums=[30 6]  target=24
+     Py first:  0.0159s | C first:  0.0000s
+     Py all:    0.0155s (1) | C all:    0.0000s (1)
+
+[ 9] PASS  n=2: divide 48/2
+     nums=[48 2]  target=24
+     Py first:  0.0160s | C first:  0.0000s
+     Py all:    0.0159s (1) | C all:    0.0000s (1)
+
+[10] PASS  n=2: zero involved 0+24
+     nums=[0 24]  target=24
+     Py first:  0.0153s | C first:  0.0000s
+     Py all:    0.0151s (3) | C all:    0.0000s (2)
+
+[11] PASS  n=2: non-24 6/2=3
+     nums=[6 2]  target=3
+     Py first:  0.0151s | C first:  0.0000s
+     Py all:    0.0173s (1) | C all:    0.0000s (1)
+
+[12] PASS  n=2: non-24 5*7=35
+     nums=[5 7]  target=35
+     Py first:  0.0136s | C first:  0.0000s
+     Py all:    0.0165s (2) | C all:    0.0000s (1)
+
+[13] PASS  n=2: non-24 8+4=12
+     nums=[8 4]  target=12
+     Py first:  0.0144s | C first:  0.0000s
+     Py all:    0.0190s (2) | C all:    0.0000s (1)
+
+[14] PASS  n=2: negative*negative (-4)*(-6)=24
+     nums=[-4 -6]  target=24
+     Py first:  0.0174s | C first:  0.0000s
+     Py all:    0.0227s (2) | C all:    0.0000s (1)
+
+[15] PASS  n=2: unsolvable (max 3*7=21)
+     nums=[3 7]  target=24
+     Py first:  0.0176s | C first:  0.0000s
+     Py all:    0.0150s (0) | C all:    0.0000s (0)
+
+[16] PASS  n=2: zero + mismatch
+     nums=[0 11]  target=10
+     Py first:  0.0159s | C first:  0.0000s
+     Py all:    0.0192s (0) | C all:    0.0000s (0)
+
+[17] PASS  n=3: 2*3*4=24
+     nums=[2 3 4]  target=24
+     Py first:  0.0283s | C first:  0.0000s
+     Py all:    0.0546s (6) | C all:    0.0000s (3)
+
+[18] PASS  n=3: 8*(1+3)=24
+     nums=[8 1 3]  target=24
+     Py first:  0.0238s | C first:  0.0000s
+     Py all:    0.0565s (10) | C all:    0.0000s (8)
+
+[19] PASS  n=3: 0+4+20=24
+     nums=[0 4 20]  target=24
+     Py first:  0.0217s | C first:  0.0000s
+     Py all:    0.0567s (20) | C all:    0.0000s (8)
+
+[20] PASS  n=3: non-24 1*2*3=6
+     nums=[1 2 3]  target=6
+     Py first:  0.0245s | C first:  0.0000s
+     Py all:    0.0540s (22) | C all:    0.0000s (11)
+
+[21] PASS  n=3: non-24 (-3)*(-3)*3=27
+     nums=[-3 -3 3]  target=27
+     Py first:  0.0224s | C first:  0.0000s
+     Py all:    0.0591s (3) | C all:    0.0000s (3)
+
+[22] PASS  n=3: non-24 9/3*1=3
+     nums=[9 3 1]  target=3
+     Py first:  0.0261s | C first:  0.0000s
+     Py all:    0.0727s (6) | C all:    0.0000s (8)
+
+[23] PASS  n=3: non-24 8+1+1=10
+     nums=[8 1 1]  target=10
+     Py first:  0.0246s | C first:  0.0000s
+     Py all:    0.0520s (6) | C all:    0.0000s (3)
+
+[24] PASS  n=3: distinct primes, unsolvable
+     nums=[2 7 11]  target=24
+     Py first:  0.0590s | C first:  0.0000s
+     Py all:    0.0599s (0) | C all:    0.0000s (0)
+
+[25] PASS  n=3: distinct primes v2, unsolvable
+     nums=[5 9 13]  target=24
+     Py first:  0.0662s | C first:  0.0000s
+     Py all:    0.0518s (0) | C all:    0.0000s (0)
+
+[26] PASS  n=3: non-24 unsolvable (5 unused)
+     nums=[2 5 9]  target=11
+     Py first:  0.0542s | C first:  0.0000s
+     Py all:    0.0696s (0) | C all:    0.0000s (0)
+
+[27] PASS  n=4: classic 1*2*3*4
+     nums=[1 2 3 4]  target=24
+     Py first:  0.0819s | C first:  0.0000s
+     Py all:    1.6496s (74) | C all:    0.0020s (62)
+
+[28] PASS  n=4: 8/(3-8/3) floating point
+     nums=[3 3 8 8]  target=24
+     Py first:  0.9868s | C first:  0.0000s
+     Py all:    1.8462s (1) | C all:    0.0010s (4)
+
+[29] PASS  n=4: (5-1/5)*5
+     nums=[1 5 5 5]  target=24
+     Py first:  0.5205s | C first:  0.0000s
+     Py all:    1.6989s (2) | C all:    0.0000s (6)
+
+[30] PASS  n=4: 6/(1-3/4)
+     nums=[1 3 4 6]  target=24
+     Py first:  1.3841s | C first:  0.0000s
+     Py all:    1.7195s (1) | C all:    0.0000s (1)
+
+[31] PASS  n=4: non-24 5+5+5+5=20
+     nums=[5 5 5 5]  target=20
+     Py first:  0.0858s | C first:  0.0000s
+     Py all:    1.8784s (7) | C all:    0.0000s (42)
+
+[32] PASS  n=4: non-24 1+2+3+4=10
+     nums=[1 2 3 4]  target=10
+     Py first:  0.0841s | C first:  0.0000s
+     Py all:    1.6336s (214) | C all:    0.0000s (57)
+
+[33] PASS  n=4: non-24 (9+3)*6/2=36
+     nums=[2 3 6 9]  target=36
+     Py first:  0.0795s | C first:  0.0000s
+     Py all:    1.5419s (70) | C all:    0.0000s (54)
+
+[34] PASS  n=4: all ones, classic unsolvable
+     nums=[1 1 1 1]  target=24
+     Py first:  1.5252s | C first:  0.0000s
+     Py all:    1.6115s (0) | C all:    0.0000s (0)
+
+[35] PASS  n=4: unsolvable (max product 30)
+     nums=[1 2 3 5]  target=48
+     Py first:  1.5776s | C first:  0.0000s
+     Py all:    1.5988s (0) | C all:    0.0000s (0)
+
+[36] PASS  n=4: negative mix, unsolvable
+     nums=[-1 1 2 3]  target=24
+     Py first:  1.6068s | C first:  0.0000s
+     Py all:    1.6606s (0) | C all:    0.0000s (0)
+
+[37] PASS  n=5: (2+2+2)*(2+2)=24
+     nums=[2 2 2 2 2]  target=24
+     Py first:  0.7672s | C first:  0.0000s
+     (all-solutions skipped for n=5)
+
+[38] PASS  n=5: 5*4+3+2-1=24
+     nums=[1 2 3 4 5]  target=24
+     Py first:  0.7854s | C first:  0.0000s
+     (all-solutions skipped for n=5)
+
+[39] PASS  n=5: 12*2*1*1*1=24 (fast)
+     nums=[12 2 1 1 1]  target=24
+     Py first:  0.7976s | C first:  0.0010s
+     (all-solutions skipped for n=5)
+
+[40] PASS  n=5: all ones, unsolvable
+     nums=[1 1 1 1 1]  target=24
+     Py first: 92.9865s | C first:  0.0310s
+     (all-solutions skipped for n=5)
+
+======================================================================
+  Results: 40/40 passed
+======================================================================
